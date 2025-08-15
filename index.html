@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>created by ctttuu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --accent: #000000; /* заменил зелёный на черный */
+      --button-green: #4caf50;
+      --button-green-hover: #388e3c;
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --text: #f0f0f0;
+      --accent: #222222;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background: var(--accent);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 5px;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .product {
+      border: 1px solid #ccc;
+      padding: 15px;
+      flex: 1 1 calc(50% - 20px);
+      background: #f9f9f9;
+      border-radius: 5px;
+    }
+
+    .product img {
+      width: 100%;
+      border-radius: 5px;
+      max-height: 180px; /* фото меньше */
+      object-fit: contain;
+    }
+
+    .product button {
+      margin-top: 10px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .reviews {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      padding-bottom: 10px;
+    }
+
+    .review {
+      min-width: 250px;
+      background: #efefef;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    footer {
+      padding: 30px;
+      background: #f0f0f0;
+      text-align: center;
+    }
+
+    .scroll-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .stock {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #e91e63;
+    }
+
+    .cart {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px dashed #aaa;
+    }
+
+    .telegram-button {
+      background: #229ED9;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+
+    /* Крутая кнопка выбора языка */
+    .language-select {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      margin-left: 20px;
+    }
+    .language-select:hover {
+      background-color: #333333;
+    }
+
+    /* Оформление формы заказа */
+    .order-form {
+      margin-top: 30px;
+      background: #fafafa;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+
+    .order-form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .order-form input, .order-form select {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .order-form button.submit-btn {
+      background-color: var(--button-green);
+      color: white;
+      font-size: 18px;
+      padding: 14px 0;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .order-form button.submit-btn:hover {
+      background-color: var(--button-green-hover);
+    }
+
+    /* Почтовые логотипы */
+    .post-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .post-option img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      border-radius: 3px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="#products">Товары</a>
+      <a href="#description">Описание</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓 Тема</button>
+    <select id="language-select" class="language-select" onchange="changeLanguage()">
+      <option value="ru" selected>Русский</option>
+      <option value="en">English</option>
+      <option value="ua">Українська</option>
+    </select>
+  </header>
+
+  <div class="container">
+    <section id="products">
+      <h2>Товары</h2>
+      <div class="products">
+        <div class="product">
+          <img src="https://images.prom.ua/6457641964_stelova-led-lyustra.jpg" alt="Люстра" />
+          <h3>LED Люстра «SkyLight»</h3>
+          <p id="product-desc">Современная, стильная и экономичная. Плавный свет, энергосбережение и шикарный внешний вид.</p>
+          <div class="stock" id="stockCount">Осталось: 8 шт.</div>
+        </div>
+      </div>
+
+      <!-- Форма заказа -->
+      <form id="order-form" class="order-form" onsubmit="sendOrder(event)">
+        <h2>Оформить заказ</h2>
+
+        <label for="lastname">Фамилия *</label>
+        <input type="text" id="lastname" required />
+
+        <label for="firstname">Имя *</label>
+        <input type="text" id="firstname" required />
+
+        <label for="middlename">Отчество</label>
+        <input type="text" id="middlename" />
+
+        <label for="product-select">Выберите товар *</label>
+        <select id="product-select" required>
+          <option value="LED Люстра «SkyLight»" selected>LED Люстра «SkyLight»</option>
+          <!-- Добавь другие товары здесь, если нужно -->
+        </select>
+
+        <label for="quantity">Количество *</label>
+        <input type="number" id="quantity" min="1" max="8" value="1" required />
+
+        <label for="post-select">Выберите почту *</label>
+        <select id="post-select" required>
+          <option value="" disabled selected>-- Выберите почту --</option>
+          <option value="Новая почта" data-img="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAb1BMVEX////88O/76unupqLcOS7bNCnsnpnZGwPZIRLaJhnYEQDaKRzXAADvrandQTjdPDH99vXywsD0zszxubf1ycbhW1LkaWHsmpXiYFjkb2jZHw/64uDrlI743Nrws6/319XdQTfdMyTnfXfohH7pi4ZItwyMAAAA3klEQVR4AXXRRRbEIBAAUaI4cXe5/xmn83o8UNuPQ37yfOIsCKPYZTFlnMYOE1xKLqwaKzBQZVEdmoSDhSbUN/S9NBNSCp16HrGUX1iQ/8p/LD+mq3+sm7epFlEJoRC715m16BGHsWnGCbHH+849Z4CfEDnVcIWISRtKzgeyMG5HSXM4GLUjva4wmN6GbJ0I5CcCMafb1heIYhtwmG8qRMX56xEiMGza/1/oWMi79B9T169YKudipFL2ZzFnN5xCBQaqZE5uDZJdyPAON016mJiA2VqMEGYhjobx+Jn3AJaPD6xUGD1/AAAAAElFTkSuQmCC">Новая почта</option>
+          <option value="Укрпочта" data-img="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAANlBMVEVHcEz/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwD/xwADVYYsAAAAEnRSTlMAG33D7M2o/40P+Ny3QilUagTod/ZpAAAAs0lEQVR4AXXS4Q7FEAwF4INuhYH3f9nLElFr7vfvpAlaxWasI6LLGmg3Lx4fhni7cAj8iol4eiAlHigDKI6Hiq3xkDD193LCRjyUlaIMvfDgsNiRrEyygXw8KR3FfhQ7ncf6kRqWh/8/CJUnCpj6bDSp+VDF0NIagjx3Sr4aoDQIhQW6W+kQLJ+cmvwWDSTDUsWp8Xbjy/FCHV8hrmKGVtV+6f1LUNRCKFn+leLlaJQrQPgBvjEJxAYw57cAAAAASUVORK5CYII=">Укрпочта</option>
+        </select>
+
+        <label for="department">Выберите отделение *</label>
+        <select id="department" required>
+          <option value="" disabled selected>-- Сначала выберите почту --</option>
+        </select>
+
+        <button type="submit" class="submit-btn">Оформить заказ</button>
+      </form>
+    </section>
+
+    <section id="description">
+      <h2>Описание товара</h2>
+      <p id="long-desc">
+        LED Люстра «SkyLight» — идеальный выбор для любой комнаты. Плавный свет, энергосбережение и шикарный внешний вид.  
+        Благодаря современным технологиям светодиодного освещения, вы экономите электроэнергию и получаете комфортное освещение.  
+        Люстра легко устанавливается и подходит для любых интерьеров.  
+        Это ваш шаг к уюту и стилю.
+      </p>
+    </section>
+
+    <section id="reviews">
+      <h2>Отзывы</h2>
+      <div class="reviews">
+        <div class="review">⭐️⭐️⭐️⭐️⭐️ <br> «Очень крутая люстра, спасибо!» — Аня</div>
+        <div class="review">⭐️⭐️⭐️⭐️ <br> «Светит ярко, выглядит стильно» — Олег</div>
+        <div class="review">⭐️⭐️⭐️⭐️⭐️ <br> «Пришла быстро, всё ок!» — Вика</div>
+      </div>
+    </section>
+
+    <section id="contacts">
+      <h2>Контакты</h2>
+      <p>Связаться с нами:</p>
+      <a class="telegram-button" href="https://t.me/ctttuu" target="_blank">Написать в Telegram</a>
+    </section>
+  </div>
+
+  <footer>
+    &copy; 2025 LED Store
+  </footer>
+
+  <button class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+  <script>
+    // Скролл кнопка наверх
+    window.addEventListener('scroll', () => {
+      document.querySelector('.scroll-top').style.display = window.scrollY > 300 ? 'block' : 'none';
+    });
+
+    // Тема
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    }
+
+    // Языки
+    const translations = {
+      ru: {
+        productDesc: "Современная, стильная и экономичная. Плавный свет, энергосбережение и шикарный внешний вид.",
+        orderTitle: "Оформить заказ",
+        lastname: "Фамилия *",
+        firstname: "Имя *",
+        middlename: "Отчество",
+        productSelect: "Выберите товар *",
+        quantity: "Количество *",
+        postSelect: "-- Выберите почту --",
+        department: "-- Сначала выберите почту --",
+        orderButton: "Оформить заказ",
+        descriptionTitle: "Описание товара",
+        descriptionText: `LED Люстра «SkyLight» — идеальный выбор для любой комнаты. Плавный свет, энергосбережение и шикарный внешний вид.  
+        Благодаря современным технологиям светодиодного освещения, вы экономите электроэнергию и получаете комфортное освещение.  
+        Люстра легко устанавливается и подходит для любых интерьеров.  
+        Это ваш шаг к уюту и стилю.`,
+        reviewsTitle: "Отзывы",
+        contactsTitle: "Контакты",
+        contactsText: "Связаться с нами:",
+      },
+      en: {
+        productDesc: "Modern, stylish and economical. Smooth light, energy saving, and gorgeous appearance.",
+        orderTitle: "Place Order",
+        lastname: "Last Name *",
+        firstname: "First Name *",
+        middlename: "Middle Name",
+        productSelect: "Select Product *",
+        quantity: "Quantity *",
+        postSelect: "-- Select Post --",
+        department: "-- Select post first --",
+        orderButton: "Place Order",
+        descriptionTitle: "Product Description",
+        descriptionText: `LED Chandelier "SkyLight" is the perfect choice for any room. Smooth light, energy saving, and gorgeous appearance.  
+        Thanks to modern LED lighting technology, you save electricity and get comfortable lighting.  
+        The chandelier is easy to install and fits any interior.  
+        It's your step to comfort and style.`,
+        reviewsTitle: "Reviews",
+        contactsTitle: "Contacts",
+        contactsText: "Contact us:",
+      },
+      ua: {
+        productDesc: "Сучасна, стильна і економічна. Плавне світло, енергозбереження та шикарний зовнішній вигляд.",
+        orderTitle: "Оформити замовлення",
+        lastname: "Прізвище *",
+        firstname: "Ім'я *",
+        middlename: "По-батькові",
+        productSelect: "Оберіть товар *",
+        quantity: "Кількість *",
+        postSelect: "-- Оберіть пошту --",
+        department: "-- Спочатку оберіть пошту --",
+        orderButton: "Оформити замовлення",
+        descriptionTitle: "Опис товару",
+        descriptionText: `LED Люстра «SkyLight» — ідеальний вибір для будь-якої кімнати. Плавне світло, енергозбереження та шикарний зовнішній вигляд.  
+        Завдяки сучасним технологіям світлодіодного освітлення, ви економите електроенергію і отримуєте комфортне освітлення.  
+        Люстра легко встановлюється і підходить для будь-яких інтер'єрів.  
+        Це ваш крок до затишку та стилю.`,
+        reviewsTitle: "Відгуки",
+        contactsTitle: "Контакти",
+        contactsText: "Зв’язатися з нами:",
+      }
+    };
+
+    function changeLanguage() {
+      const lang = document.getElementById('language-select').value;
+      const t = translations[lang];
+
+      document.getElementById('product-desc').textContent = t.productDesc;
+      document.querySelector('#order-form h2').textContent = t.orderTitle;
+      document.querySelector('label[for="lastname"]').textContent = t.lastname;
+      document.querySelector('label[for="firstname"]').textContent = t.firstname;
+      document.querySelector('label[for="middlename"]').textContent = t.middlename;
+      document.querySelector('label[for="product-select"]').textContent = t.productSelect;
+      document.querySelector('label[for="quantity"]').textContent = t.quantity;
+
+      const postSelect = document.getElementById('post-select');
+      postSelect.options[0].text = t.postSelect;
+
+      const departmentSelect = document.getElementById('department');
+      departmentSelect.options[0].text = t.department;
+
+      document.querySelector('.submit-btn').textContent = t.orderButton;
+
+      document.querySelector('#description h2').textContent = t.descriptionTitle;
+      document.getElementById('long-desc').textContent = t.descriptionText;
+
+      document.querySelector('#reviews h2').textContent = t.reviewsTitle;
+
+      document.querySelector('#contacts h2').textContent = t.contactsTitle;
+      document.querySelector('#contacts p').textContent = t.contactsText;
+
+      // Валюта в гривнах всегда
+      // Можно при желании добавить отображение, но по условию всегда гривна
+    }
+
+    // Логотипы почт в селекте
+    const postSelect = document.getElementById('post-select');
+    postSelect.addEventListener('change', () => {
+      const options = postSelect.options;
+      const selectedIndex = postSelect.selectedIndex;
+      for(let i=0; i<options.length; i++){
+        if(i === selectedIndex && options[i].dataset.img){
+          postSelect.style.backgroundImage = `url(${options[i].dataset.img})`;
+          postSelect.style.backgroundRepeat = 'no-repeat';
+          postSelect.style.backgroundPosition = '5px center';
+          postSelect.style.paddingLeft = '35px';
+          break;
+        } else if(i === selectedIndex){
+          postSelect.style.backgroundImage = '';
+          postSelect.style.paddingLeft = '';
+        }
+      }
+      updateDepartments(postSelect.value);
+    });
+
+    // Обновление отделений для выбранной почты
+    const departmentsData = {
+      "Новая почта": [
+        "Отделение 1: Киев, ул. Крещатик, 1",
+        "Отделение 2: Киев, ул. Саксаганского, 45",
+        "Отделение 3: Львов, ул. Свободы, 10",
+        "Отделение 4: Харьков, пр. Науки, 14",
+        "Отделение 5: Одесса, ул. Дерибасовская, 7",
+      ],
+      "Укрпочта": [
+        "Отделение А: Киев, ул. Грушевского, 12",
+        "Отделение Б: Львов, ул. Леси Украинки, 5",
+        "Отделение В: Харьков, ул. Пушкинская, 9",
+        "Отделение Г: Одесса, ул. Преображенская, 3",
+        "Отделение Д: Днепр, ул. Карла Маркса, 17",
+      ]
+    };
+
+    function updateDepartments(post) {
+      const depSelect = document.getElementById('department');
+      depSelect.innerHTML = "";
+      if(!departmentsData[post]) {
+        depSelect.innerHTML = `<option value="" disabled selected>-- Сначала выберите почту --</option>`;
+        depSelect.disabled = true;
+        return;
+      }
+      depSelect.disabled = false;
+      depSelect.innerHTML = `<option value="" disabled selected>-- Выберите отделение --</option>`;
+      departmentsData[post].forEach(dep => {
+        const option = document.createElement('option');
+        option.value = dep;
+        option.textContent = dep;
+        depSelect.appendChild(option);
+      });
+    }
+
+    // Отправка формы в Telegram
+    async function sendOrder(event) {
+      event.preventDefault();
+
+      const lastname = document.getElementById('lastname').value.trim();
+      const firstname = document.getElementById('firstname').value.trim();
+      const middlename = document.getElementById('middlename').value.trim();
+      const product = document.getElementById('product-select').value;
+      const quantity = document.getElementById('quantity').value;
+      const post = document.getElementById('post-select').value;
+      const department = document.getElementById('department').value;
+
+      if (!lastname || !firstname || !product || !quantity || !post || !department) {
+        alert('Пожалуйста, заполните все обязательные поля.');
+        return;
+      }
+
+      const message = `
+Новый заказ:
+Фамилия: ${lastname}
+Имя: ${firstname}
+Отчество: ${middlename || '-'}
+Товар: ${product}
+Количество: ${quantity}
+Почта: ${post}
+Отделение: ${department}
+      `;
+
+      // Telegram Bot API
+      const token = '8453889791:AAHQpU1w2H-T-HBHLq2hLaLaYsUwbOOm17I';
+      const chatId = '6558358456';
+      const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'HTML'
+          })
+        });
+
+        if (response.ok) {
+          alert('Заказ отправлен! Спасибо.');
+          document.getElementById('order-form').reset();
+          // Очищаем отделение и почту чтобы не путать
+          document.getElementById('department').innerHTML = `<option value="" disabled selected>-- Сначала выберите почту --</option>`;
+          document.getElementById('department').disabled = true;
+          document.getElementById('post-select').style.backgroundImage = '';
+          document.getElementById('post-select').style.paddingLeft = '';
+        } else {
+          alert('Ошибка при отправке заказа, попробуйте позже.');
+        }
+      } catch (error) {
+        alert('Ошибка сети: ' + error.message);
+      }
+    }
+
+    // Инициализация
+    window.onload = () => {
+      document.getElementById('department').disabled = true;
+      changeLanguage();
+    };
+
+  </script>
+</body>
+</html>
